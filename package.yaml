@@ -6,26 +6,21 @@ description: A small example of using hs-di to unit test effectful code.
 maintainer: Milan Nagy
 
 extra-source-files:
-- package.yaml
 - README.md
 - stack.yaml
+- package.yaml
 
 ghc-options:
-- -rtsopts
-- -threaded
 - -ddump-splices
 - -ddump-to-file
-- -with-rtsopts=-N
 - -fdefer-type-errors
 
 default-extensions:
-- GADTs
 - RankNTypes
 - LambdaCase
+- QuasiQuotes
 - TemplateHaskell
 - OverloadedStrings
-- DefaultSignatures
-- GeneralizedNewtypeDeriving
 - NoMonomorphismRestriction
 
 dependencies:
@@ -33,6 +28,7 @@ dependencies:
 - time
 - base
 - hs-di
+- interpolatedstring-perl6
 
 library:
   source-dirs: library

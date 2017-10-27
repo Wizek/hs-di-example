@@ -5,21 +5,25 @@ import            Data.Time                 (UTCTime, utctDay, addUTCTime)
 import            Test.Hspec
 import            Data.IORef                (newIORef, modifyIORef, readIORef)
 import            Data.Function             ((&))
-import            HsDiExample.Main
+import            HsDiExample.Main          (mainD, mainT)
 import            Data.Functor.Identity     (runIdentity)
 import            Data.Time.Clock.POSIX     (posixSecondsToUTCTime)
+import            Text.InterpolatedString.Perl6 (qc)
 
 spec :: Spec
 spec = describe "main" $ do
+
   logMessages <- runIO $ do
     logs <- newIORef []
     clockStart <- newIORef $ posixSecondsToUTCTime 0
+
     $(mainD
-      & override "logger" "\\a -> modifyIORef logs (++ [a])"
-      & override "getArgs" "return [\"foo\"]"
-      & override "readFile" "\\_ -> return \"Alyssa\""
-      & override "getCurrentTime" "readModifyIORef clockStart (addUTCTime 1)"
+      & override "logger"         [qc| \a -> modifyIORef logs (++ [a]) |]
+      & override "getArgs"        [qc| return ["sample.txt"] |]
+      & override "readFile"       [qc| \"sample.txt" -> return "Alyssa" |]
+      & override "getCurrentTime" [qc| readModifyIORef clockStart (addUTCTime 1) |]
       & assemble)
+
     readIORef logs
 
 
