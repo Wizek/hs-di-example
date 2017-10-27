@@ -3,7 +3,7 @@ module HsDiExample.MainSpec where
 import            DI                        (assemble, override)
 import            Data.Time                 (UTCTime, utctDay, addUTCTime)
 import            Test.Hspec
-import            Data.IORef                (newIORef, modifyIORef, readIORef)
+import            Data.IORef                (newIORef, modifyIORef, readIORef, IORef)
 import            Data.Function             ((&))
 import            HsDiExample.Main          (mainD, mainT)
 import            Data.Functor.Identity     (runIdentity)
@@ -37,10 +37,11 @@ spec = describe "main" $ do
     (logMessages !! 1) `shouldBe` "1000 milliseconds"
 
 
-
+readModifyIORef :: IORef a -> (a -> a) -> IO a
 readModifyIORef ref phi = do
   val <- readIORef ref
   modifyIORef ref phi
   return val
 
+noop :: Monad m => m ()
 noop = return ()
