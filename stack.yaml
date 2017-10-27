@@ -1,7 +1,9 @@
 resolver: lts-9.10
 
 packages: ['.']
-extra-deps: []
+extra-deps:
+  - hs-di-0.3.0
+  - compose-ltr-0.2.3
 
 flags: {}
 

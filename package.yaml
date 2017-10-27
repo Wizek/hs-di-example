@@ -10,13 +10,20 @@ extra-source-files:
 - README.md
 - stack.yaml
 
-ghc-options: -Wall
+ghc-options:
+# - -Wall
+- -ddump-splices
+- -ddump-to-file
+
 default-extensions:
-- DefaultSignatures
 - GADTs
-- GeneralizedNewtypeDeriving
+- RankNTypes
 - LambdaCase
+- TemplateHaskell
 - OverloadedStrings
+- DefaultSignatures
+- GeneralizedNewtypeDeriving
+- NoMonomorphismRestriction
 
 library:
   dependencies:
@@ -27,6 +34,7 @@ library:
   - text
   - time
   - transformers
+  - hs-di
   source-dirs: library
 
 executables:
@@ -55,6 +63,7 @@ tests:
     - text
     - time
     - transformers
+    - hs-di
     ghc-options:
     - -rtsopts
     - -threaded

@@ -1,41 +1,39 @@
-module MTLStyleExample.Main
-  ( main
-  , mainIO
-  ) where
+{-# options_ghc -fdefer-type-errors #-}
+
+module MTLStyleExample.Main where
 
 import qualified Data.Text as T
+import qualified Data.Text.IO as T
 
 import Prelude hiding (readFile)
 
-import Control.Monad.Time (MonadTime(..))
-import Control.Monad.Logger (LoggingT, MonadLogger(..), logInfoN, runStderrLoggingT)
 import Data.Semigroup ((<>))
 import Data.Time.Clock (diffUTCTime)
+import Data.Time (getCurrentTime)
 
-import MTLStyleExample.Interfaces
+import System.Environment (getArgs)
 
---------------------------------------------------------------------------------
--- IO wiring
+import DI
 
-newtype AppM a = AppM (LoggingT IO a)
-  deriving ( Functor, Applicative, Monad
-           , MonadArguments, MonadFileSystem, MonadLogger, MonadTime )
+injLeaf "getCurrentTime"
+injLeaf "getArgs"
 
-runAppM :: AppM a -> IO a
-runAppM (AppM x) = runStderrLoggingT x
+injAllG
 
-mainIO :: IO ()
-mainIO = runAppM main
+logger :: T.Text -> IO ()
+loggerI = T.putStrLn
+
+readFileI = T.readFile
 
 --------------------------------------------------------------------------------
 -- Logic
 
-main :: (MonadArguments m, MonadFileSystem m, MonadLogger m, MonadTime m) => m ()
-main = do
-  startTime <- currentTime
+main :: IO ()
+mainI getCurrentTime getArgs readFile logger = do
+  startTime <- getCurrentTime
   [fileName] <- getArgs
   target <- readFile fileName
-  logInfoN $ "Hello, " <> target <> "!"
-  endTime <- currentTime
+  logger $ "Hello, " <> target <> "!"
+  endTime <- getCurrentTime
   let duration = endTime `diffUTCTime` startTime
-  logInfoN $ T.pack (show (round (duration * 1000) :: Integer)) <> " milliseconds"
+  logger $ T.pack (show (round (duration * 1000) :: Integer)) <> " milliseconds"
