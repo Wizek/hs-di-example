@@ -1,9 +1,9 @@
-name: mtl-style-example
+name: hs-di-example
 version: '0.0.0'
 category: Other
-synopsis: A small example of using mtl style to unit test effectful code.
-description: A small example of using mtl style to unit test effectful code.
-maintainer: Alexis King
+synopsis:    A small example of using hs-di to unit test effectful code.
+description: A small example of using hs-di to unit test effectful code.
+maintainer: Milan Nagy
 
 extra-source-files:
 - package.yaml
@@ -11,9 +11,12 @@ extra-source-files:
 - stack.yaml
 
 ghc-options:
-# - -Wall
+- -rtsopts
+- -threaded
 - -ddump-splices
 - -ddump-to-file
+- -with-rtsopts=-N
+- -fdefer-type-errors
 
 default-extensions:
 - GADTs
@@ -25,48 +28,26 @@ default-extensions:
 - GeneralizedNewtypeDeriving
 - NoMonomorphismRestriction
 
+dependencies:
+- text
+- time
+- base
+- hs-di
+
 library:
-  dependencies:
-  - base
-  - monad-logger
-  - monad-time
-  - mtl
-  - text
-  - time
-  - transformers
-  - hs-di
   source-dirs: library
 
 executables:
-  mtl-style-example:
+  hs-di-example:
     dependencies:
-    - base
-    - mtl-style-example
-    ghc-options:
-    - -rtsopts
-    - -threaded
-    - -with-rtsopts=-N
+    - hs-di-example
     main: Main.hs
     source-dirs: executable
 
 tests:
-  mtl-style-example-test-suite:
+  hs-di-example-test-suite:
     dependencies:
-    - base
-    - bytestring
-    - fast-logger
     - hspec
-    - monad-logger
-    - monad-time
-    - mtl
-    - mtl-style-example
-    - text
-    - time
-    - transformers
-    - hs-di
-    ghc-options:
-    - -rtsopts
-    - -threaded
-    - -with-rtsopts=-N
+    - hs-di-example
     main: Main.hs
     source-dirs: test-suite

@@ -1,4 +1,4 @@
-import qualified MTLStyleExample.Main as MTLStyleExample
+import qualified HsDiExample.Main as HsDiExample
 
 main :: IO ()
-main = MTLStyleExample.main
+main = HsDiExample.main

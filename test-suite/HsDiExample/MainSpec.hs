@@ -1,20 +1,13 @@
-{-# options_ghc -fdefer-type-errors #-}
+module HsDiExample.MainSpec where
 
-module MTLStyleExample.MainSpec where
-
-import Data.Function ((&))
-import Data.Functor.Identity (runIdentity)
-import Data.Time.Clock.POSIX (posixSecondsToUTCTime)
-import Test.Hspec
-
-import MTLStyleExample.Main
-import MTLStyleExample.Test.Stubs
-
-import Data.IORef (newIORef, modifyIORef, readIORef)
-import Data.Time (UTCTime, utctDay, addUTCTime)
-
-import DI (assemble, override)
-
+import            DI                        (assemble, override)
+import            Data.Time                 (UTCTime, utctDay, addUTCTime)
+import            Test.Hspec
+import            Data.IORef                (newIORef, modifyIORef, readIORef)
+import            Data.Function             ((&))
+import            HsDiExample.Main
+import            Data.Functor.Identity     (runIdentity)
+import            Data.Time.Clock.POSIX     (posixSecondsToUTCTime)
 
 spec :: Spec
 spec = describe "main" $ do
@@ -29,6 +22,7 @@ spec = describe "main" $ do
       & assemble)
     readIORef logs
 
+
   it "prints two log messages" $
     length logMessages `shouldBe` 2
 
@@ -37,6 +31,8 @@ spec = describe "main" $ do
 
   it "prints the elapsed time in milliseconds as the second message" $
     (logMessages !! 1) `shouldBe` "1000 milliseconds"
+
+
 
 readModifyIORef ref phi = do
   val <- readIORef ref
