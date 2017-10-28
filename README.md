@@ -1,29 +1,58 @@
-# haskell-mtl-style-example
+# hs-di-example
 
-This project includes a small example of using the so-called “mtl style” to unit test effectful Haskell code in a completely pure, `IO`-free way. The program it tests is extremely simple, but it performs numerous side-effects, making it tricky to completely test without `IO`: it uses command-line arguments, reads a file, prints log messages, and uses the system clock to calculate its running time.
+For some time now, people have been asking me to compare hs-di ([github][gh], [hackage][hk]) to other techniques available to Haskell programmers for achieving fully deterministic unit-testing for effectful code. And when I saw Alexis King's repository posted [on Reddit][reddit] about [an mtl-style unit-testing example][fork], and saw just how much boilerplate was required to make that style work, I thought this was a great opportunity to contrast the two approaches.
 
-The code is divided into the following modules:
+So this repository contains a working example of hs-di-style converted from the mtl-style.
 
-  - #### `MTLStyleExample.Main`
+According to `cloc`, we were able to get to:
 
-    This module implements the actual program logic. The logic is not especially complex, so this module is small compared to the rest of the code, but in a real program, it would likely dwarf the rest of the program in size.
+```
+$ cloc --exclude-dir=.stack-work .
+      11 text files.
+      11 unique files.
+     305 files ignored.
 
-    In addition to implementing the program logic, this module also contains the effectful transformer stack that implements the effects when running the program for “real”.
+http://cloc.sourceforge.net v 1.60  T=0.10 s (68.9 files/s, 1447.9 lines/s)
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Haskell                          5             19              3             66
+YAML                             2             10              0             49
+-------------------------------------------------------------------------------
+SUM:                             7             29              3            115
+-------------------------------------------------------------------------------
+```
 
-  - #### `MTLStyleExample.Interfaces`
+Coming from:
 
-    This module contains the mtl-style typeclasses that are used to decouple the effect interfaces used in the code from their implementations. It also includes implementations of some of the interfaces in `IO`, which are trivial by design—the real implementations must be trivial, or there is logic that is not be under test coverage!
+```
+$ cloc --exclude-dir=.stack-work .
+      13 text files.
+      13 unique files.
+     222 files ignored.
 
-  - #### `MTLStyleExample.MainSpec`
+http://cloc.sourceforge.net v 1.60  T=0.30 s (29.6 files/s, 999.2 lines/s)
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Haskell                          7             52             34            147
+YAML                             2              8              0             63
+-------------------------------------------------------------------------------
+SUM:                             9             60             34            210
+-------------------------------------------------------------------------------
+```
 
-    The unit tests for the logic defined in `MTLStyleExample.Main`. Note that all of the functionality of the program is tested in a completely pure way without needing to perform an effectful end-to-end or integration test.
+A better then two-fold improvement (147 SLOC -> 66 SLOC)!
 
-  - #### `MTLStyleExample.Test.Stubs`
+## Footnotes
 
-    This includes the “fake” test-time implementation of the interfaces defined in `MTLStyleExample.Interfaces`, and these implementations are used in `MTLStyleExample.MainSpec`. These attempt to implement the interfaces as faithfully as possible without needing to use an actual file system, the real system clock, or the real standard output.
+1. Few of the 4 mocks are slightly less complex than in the mtl example, so that may skew the sloc counts somewhat. But on the other hand, the current mocks are perfectly adequate for testing as much as we do, so I'd say less is more in this case.
 
-    This code ends up actually being some of the most verbose in the entire project, but remember that each of these fake implementations only needs to be written *once* per effect, so even as the program logic grows, this module never needs to change.
+2. During development, a few times I ran into a type error `... is as general as its inferred signature`. It's not present in the current state of the repository, and it's worked around for even when it would show up. But if you'd like to help me overcome this issue, and/or you'd like to read more, [head over here](https://gist.github.com/Wizek/396b0a608fa93d7d458a78dbf7c88870).
 
-For some additional information on one of the techniques used in this project (that is, using `DefaultSignatures` to make lifting instances derivable), see my blog post [Lifts for free: making mtl typeclasses derivable][lifts-for-free].
 
-[lifts-for-free]: https://lexi-lambda.github.io/blog/2017/04/28/lifts-for-free-making-mtl-typeclasses-derivable/
+[fork]: https://github.com/lexi-lambda/mtl-style-example
+[gh]: https://github.com/Wizek/hs-di#readme
+[hk]: https://hackage.haskell.org/package/hs-di
+[reddit]: https://www.reddit.com/r/haskell/comments/78xk5y/mtlstyleexample_a_small_selfcontained_example_of/
+[error]: https://gist.github.com/Wizek/d5d66b3f7e95b329fdb2edc1d5207455
