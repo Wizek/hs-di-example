@@ -28,6 +28,8 @@ dependencies:
 - time
 - base
 - hs-di
+- containers
+- compose-ltr
 - interpolatedstring-perl6
 
 library:
